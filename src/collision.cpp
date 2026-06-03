@@ -90,6 +90,8 @@ const char* algorithmName(CollisionAlgorithm algorithm) {
       return "AABB + OBB";
     case CollisionAlgorithm::AabbTriangleArea:
       return "AABB + triangle-area";
+    case CollisionAlgorithm::FixedAabbOnly:
+      return "fixed AABB";
     case CollisionAlgorithm::FixedAabbObb:
       return "fixed AABB + OBB";
     case CollisionAlgorithm::FixedAabbTriangleArea:
@@ -113,6 +115,8 @@ bool runCollision(CollisionAlgorithm algorithm,
       return collidesAabbObb(map, pose, shape);
     case CollisionAlgorithm::AabbTriangleArea:
       return collidesAabbTriangleArea(map, pose, shape);
+    case CollisionAlgorithm::FixedAabbOnly:
+      return collidesFixedAabbOnly(map, pose, shape);
     case CollisionAlgorithm::FixedAabbObb:
       return collidesFixedAabbObb(map, pose, shape);
     case CollisionAlgorithm::FixedAabbTriangleArea:
@@ -165,18 +169,14 @@ AABB boundingBox(const RectangleCorners& corners) {
 
 bool collidesAabbOnly(const GridMap& map, const Pose2D& pose, const VehicleShape& shape) {
   const auto range = aabbToCellRange(map, boundingBox(vehicleCorners(pose, shape)));
-  for (int y = range.min_y; y <= range.max_y; ++y) {
-    for (int x = range.min_x; x <= range.max_x; ++x) {
-      if (map.occupied(x, y)) {
-        return true;
-      }
-    }
-  }
-  return false;
+  return map.hasOccupiedInRange(range.min_x, range.min_y, range.max_x, range.max_y);
 }
 
 bool collidesAabbObb(const GridMap& map, const Pose2D& pose, const VehicleShape& shape) {
   const auto range = aabbToCellRange(map, boundingBox(vehicleCorners(pose, shape)));
+  if (!map.hasOccupiedInRange(range.min_x, range.min_y, range.max_x, range.max_y)) {
+    return false;
+  }
   const double cos_yaw = std::cos(pose.yaw);
   const double sin_yaw = std::sin(pose.yaw);
   for (int y = range.min_y; y <= range.max_y; ++y) {
@@ -197,6 +197,9 @@ bool collidesAabbTriangleArea(const GridMap& map,
                               const VehicleShape& shape) {
   const auto corners = vehicleCorners(pose, shape);
   const auto range = aabbToCellRange(map, boundingBox(corners));
+  if (!map.hasOccupiedInRange(range.min_x, range.min_y, range.max_x, range.max_y)) {
+    return false;
+  }
   for (int y = range.min_y; y <= range.max_y; ++y) {
     for (int x = range.min_x; x <= range.max_x; ++x) {
       if (!map.occupied(x, y)) {
@@ -210,8 +213,18 @@ bool collidesAabbTriangleArea(const GridMap& map,
   return false;
 }
 
+bool collidesFixedAabbOnly(const GridMap& map,
+                           const Pose2D& pose,
+                           const VehicleShape& shape) {
+  const auto range = aabbToCellRange(map, fixedMaxOffsetAabb(pose, shape));
+  return map.hasOccupiedInRange(range.min_x, range.min_y, range.max_x, range.max_y);
+}
+
 bool collidesFixedAabbObb(const GridMap& map, const Pose2D& pose, const VehicleShape& shape) {
   const auto range = aabbToCellRange(map, fixedMaxOffsetAabb(pose, shape));
+  if (!map.hasOccupiedInRange(range.min_x, range.min_y, range.max_x, range.max_y)) {
+    return false;
+  }
   const double cos_yaw = std::cos(pose.yaw);
   const double sin_yaw = std::sin(pose.yaw);
   for (int y = range.min_y; y <= range.max_y; ++y) {
@@ -231,6 +244,9 @@ bool collidesFixedAabbTriangleArea(const GridMap& map,
                                    const Pose2D& pose,
                                    const VehicleShape& shape) {
   const auto range = aabbToCellRange(map, fixedMaxOffsetAabb(pose, shape));
+  if (!map.hasOccupiedInRange(range.min_x, range.min_y, range.max_x, range.max_y)) {
+    return false;
+  }
   const auto corners = vehicleCorners(pose, shape);
   for (int y = range.min_y; y <= range.max_y; ++y) {
     for (int x = range.min_x; x <= range.max_x; ++x) {
@@ -252,6 +268,9 @@ bool collidesCircle(const GridMap& map, const Pose2D& pose, const VehicleShape& 
   const double radius_sq = radius * radius;
   const auto range = aabbToCellRange(
       map, AABB{pose.x - radius, pose.y - radius, pose.x + radius, pose.y + radius});
+  if (!map.hasOccupiedInRange(range.min_x, range.min_y, range.max_x, range.max_y)) {
+    return false;
+  }
 
   const Point2D center{pose.x, pose.y};
   for (int y = range.min_y; y <= range.max_y; ++y) {
@@ -284,6 +303,9 @@ bool collidesTwoCircles(const GridMap& map, const Pose2D& pose, const VehicleSha
                         std::max(front_center.x, rear_center.x) + radius,
                         std::max(front_center.y, rear_center.y) + radius};
   const auto range = aabbToCellRange(map, range_aabb);
+  if (!map.hasOccupiedInRange(range.min_x, range.min_y, range.max_x, range.max_y)) {
+    return false;
+  }
 
   for (int y = range.min_y; y <= range.max_y; ++y) {
     for (int x = range.min_x; x <= range.max_x; ++x) {

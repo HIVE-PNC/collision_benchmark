@@ -24,12 +24,20 @@ class GridMap {
   void setOccupied(int x, int y, bool occupied);
   [[nodiscard]] Point2D cellCenter(int x, int y) const;
   [[nodiscard]] std::uint32_t occupiedCount() const;
+  [[nodiscard]] std::uint32_t occupiedCountInRange(int min_x,
+                                                   int min_y,
+                                                   int max_x,
+                                                   int max_y) const;
+  [[nodiscard]] bool hasOccupiedInRange(int min_x, int min_y, int max_x, int max_y) const;
+  void prepareRangeQueries() const;
 
   void saveCsv(const std::filesystem::path& path) const;
   void saveObstaclePoints(const std::filesystem::path& path) const;
 
  private:
   [[nodiscard]] std::size_t index(int x, int y) const;
+  [[nodiscard]] std::size_t prefixIndex(int x, int y) const;
+  void ensureOccupancyPrefix() const;
 
   double width_m_ = 0.0;
   double height_m_ = 0.0;
@@ -37,12 +45,14 @@ class GridMap {
   int width_cells_ = 0;
   int height_cells_ = 0;
   std::vector<std::uint8_t> cells_;
+  mutable bool occupancy_prefix_valid_ = false;
+  mutable std::vector<std::uint32_t> occupancy_prefix_;
 };
 
 GridMap makeRandomObstacleMap(double width_m,
                               double height_m,
                               double resolution_m,
-                              double obstacle_probability,
+                              double obstacle_density,
                               std::uint32_t seed);
 
 std::vector<Pose2D> makeRandomPoses(std::size_t count,

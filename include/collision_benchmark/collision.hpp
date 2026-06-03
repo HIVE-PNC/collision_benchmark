@@ -13,6 +13,7 @@ enum class CollisionAlgorithm {
   AabbOnly,
   AabbObb,
   AabbTriangleArea,
+  FixedAabbOnly,
   FixedAabbObb,
   FixedAabbTriangleArea,
   Circle,
@@ -40,6 +41,9 @@ struct BenchmarkResult {
 [[nodiscard]] bool collidesAabbTriangleArea(const GridMap& map,
                                             const Pose2D& pose,
                                             const VehicleShape& shape);
+[[nodiscard]] bool collidesFixedAabbOnly(const GridMap& map,
+                                         const Pose2D& pose,
+                                         const VehicleShape& shape);
 [[nodiscard]] bool collidesFixedAabbObb(const GridMap& map,
                                         const Pose2D& pose,
                                         const VehicleShape& shape);
