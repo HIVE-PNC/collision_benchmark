@@ -13,30 +13,30 @@ class GridMap {
  public:
   GridMap(double width_m, double height_m, double resolution_m);
 
-  [[nodiscard]] int widthCells() const { return width_cells_; }
-  [[nodiscard]] int heightCells() const { return height_cells_; }
-  [[nodiscard]] double widthMeters() const { return width_m_; }
-  [[nodiscard]] double heightMeters() const { return height_m_; }
-  [[nodiscard]] double resolution() const { return resolution_m_; }
+  int widthCells() const { return width_cells_; }
+  int heightCells() const { return height_cells_; }
+  double widthMeters() const { return width_m_; }
+  double heightMeters() const { return height_m_; }
+  double resolution() const { return resolution_m_; }
 
-  [[nodiscard]] bool inBounds(int x, int y) const;
-  [[nodiscard]] bool occupied(int x, int y) const;
+  bool inBounds(int x, int y) const;
+  bool occupied(int x, int y) const;
   void setOccupied(int x, int y, bool occupied);
-  [[nodiscard]] Point2D cellCenter(int x, int y) const;
-  [[nodiscard]] std::uint32_t occupiedCount() const;
-  [[nodiscard]] std::uint32_t occupiedCountInRange(int min_x,
+  Point2D cellCenter(int x, int y) const;
+  std::uint32_t occupiedCount() const;
+  std::uint32_t occupiedCountInRange(int min_x,
                                                    int min_y,
                                                    int max_x,
                                                    int max_y) const;
-  [[nodiscard]] bool hasOccupiedInRange(int min_x, int min_y, int max_x, int max_y) const;
+  bool hasOccupiedInRange(int min_x, int min_y, int max_x, int max_y) const;
   void prepareRangeQueries() const;
 
   void saveCsv(const std::filesystem::path& path) const;
   void saveObstaclePoints(const std::filesystem::path& path) const;
 
  private:
-  [[nodiscard]] std::size_t index(int x, int y) const;
-  [[nodiscard]] std::size_t prefixIndex(int x, int y) const;
+  std::size_t index(int x, int y) const;
+  std::size_t prefixIndex(int x, int y) const;
   void ensureOccupancyPrefix() const;
 
   double width_m_ = 0.0;

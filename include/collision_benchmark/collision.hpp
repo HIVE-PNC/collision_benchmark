@@ -28,32 +28,32 @@ struct BenchmarkResult {
   double average_us = 0.0;
 };
 
-[[nodiscard]] RectangleCorners vehicleCorners(const Pose2D& pose,
+RectangleCorners vehicleCorners(const Pose2D& pose,
                                               const VehicleShape& shape);
-[[nodiscard]] AABB boundingBox(const RectangleCorners& corners);
+AABB boundingBox(const RectangleCorners& corners);
 
-[[nodiscard]] bool collidesAabbOnly(const GridMap& map,
+bool collidesAabbOnly(const GridMap& map,
                                     const Pose2D& pose,
                                     const VehicleShape& shape);
-[[nodiscard]] bool collidesAabbObb(const GridMap& map,
+bool collidesAabbObb(const GridMap& map,
                                    const Pose2D& pose,
                                    const VehicleShape& shape);
-[[nodiscard]] bool collidesAabbTriangleArea(const GridMap& map,
+bool collidesAabbTriangleArea(const GridMap& map,
                                             const Pose2D& pose,
                                             const VehicleShape& shape);
-[[nodiscard]] bool collidesFixedAabbOnly(const GridMap& map,
+bool collidesFixedAabbOnly(const GridMap& map,
                                          const Pose2D& pose,
                                          const VehicleShape& shape);
-[[nodiscard]] bool collidesFixedAabbObb(const GridMap& map,
+bool collidesFixedAabbObb(const GridMap& map,
                                         const Pose2D& pose,
                                         const VehicleShape& shape);
-[[nodiscard]] bool collidesFixedAabbTriangleArea(const GridMap& map,
+bool collidesFixedAabbTriangleArea(const GridMap& map,
                                                  const Pose2D& pose,
                                                  const VehicleShape& shape);
-[[nodiscard]] bool collidesCircle(const GridMap& map,
+bool collidesCircle(const GridMap& map,
                                   const Pose2D& pose,
                                   const VehicleShape& shape);
-[[nodiscard]] bool collidesTwoCircles(const GridMap& map,
+bool collidesTwoCircles(const GridMap& map,
                                       const Pose2D& pose,
                                       const VehicleShape& shape);
 
