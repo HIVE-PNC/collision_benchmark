@@ -79,6 +79,8 @@ cmake --build build
 测试环境：本项目在 Release 模式下编译并运行一次，测试 100000 个固定随机位姿。
 
 ```text
+Cpu:Intel(R) Core(TM) i5-13450HX CPU @ 4.60GHz, 10 cores, 16 threads
+
 Map: 100m x 100m, resolution 0.25m, cells 400 x 400, occupied 3200, density 0.02, map_seed 20260602, pose_seed 20260603
 Vehicle: length 4m, width 2m, poses 100000
 
@@ -97,6 +99,8 @@ two circles                         100000         24893          13.890        
 ```
 
 这里把 `AABB + OBB` 的碰撞数量作为准确值，`false_pos_%` 按 `(当前算法碰撞数 - AABB+OBB碰撞数) / 总位姿数 * 100` 计算。小结一下就是 `fixed AABB` 和 `AABB` 最快，但它们仍然是保守检测。`AABB + OBB` 和 `AABB + triangle-area` 的碰撞数量一致，可以作为矩形车体精确检测结果。`fixed AABB`、`circle`、`two circles` 都有不同程度误检，其中 `fixed AABB` 的误检最多。
+
+还没上SIMD，编译优化也没有开到最大，感觉还有提升空间
 
 ## todo
 - [x] 障碍物密度降低
