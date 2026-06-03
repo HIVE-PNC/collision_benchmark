@@ -60,6 +60,8 @@ int main() {
         collision_benchmark::CollisionAlgorithm::AabbTriangleArea,
         collision_benchmark::CollisionAlgorithm::FixedAabbObb,
         collision_benchmark::CollisionAlgorithm::FixedAabbTriangleArea,
+        collision_benchmark::CollisionAlgorithm::Circle,
+        collision_benchmark::CollisionAlgorithm::TwoCircles,
     };
 
     for (const auto algorithm : algorithms) {
